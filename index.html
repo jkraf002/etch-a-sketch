@@ -11,12 +11,14 @@
             div {
                 margin: 0;
                 padding: 0;
+                text-align: center;
             }
 
-            #options {
-                height: 5vmin;
-                line-height: 5vmin;
+            .optionsDiv {
                 text-align: center;
+                height: 2.5vmin;
+                line-height: 2.5vmin;
+                vertical-align: middle;
             }
 
             #container {
@@ -34,14 +36,31 @@
             .gridSquare {
                 margin: 0 0;
                 border: solid 1px black;
+                opacity: '';
+            }
+
+            .randomized {
+                transform: scale(1.1);
+                border-color: #ffc600;
+                box-shadow: 0 0 1rem #ffc600;
+            }
+
+            input {
+                margin: 0 3px;
             }
 
         </style>
     </head>
 
     <body>
-        <div id='options'>
-            <button>Grid Size</button>
+        <div class="optionsDiv">
+            <label for='squares'>Grid Size (1-64):</label>
+            <input type='number' id='squares' name='squares' min='1' max='64' value='16'>    
+        </div>
+        <div class="optionsDiv">
+            <label for='color'>Color:</label>
+            <input id='color' type='color' name='color' value='#ff0000'> or
+            <input id='randomButton' type='button' id='random' name='random' value='Random'>
         </div>
         <div id='container'>
             
@@ -50,10 +69,11 @@
 
     <script>
         // User defined number of grids
-        let gridSize = 32;
+        let gridSize = document.getElementById('squares').value;
         // grid height scaled to 90% of screen size and removing 2px for border
         let gridHeight = (window.innerHeight * .90 / gridSize) - 2;
         let container = document.getElementById('container');
+        let randomButton = document.getElementById('randomButton');
 
         // Loop creates a AxA grid of square divs
         for (let i = 0; i < gridSize; i++) {
@@ -73,12 +93,29 @@
         // Add event listeners for all of the squares in the grid.
         const gridList = Array.from(document.getElementsByClassName('gridSquare'));
         gridList.forEach(element => element.addEventListener('mouseover', changeColor));
+
+        // Add event listener for Random color button
+        randomButton.addEventListener('mousedown', toggleRandom);
         
+        function toggleRandom(e) {
+            e.target.classList.toggle('randomized');
+        }
+
+        function randomHsl() {
+            return 'hsla(' + (Math.random() * 360) + ', 100%, 50%, 1)';
+        }
 
         function changeColor(e) {
-            if (e.target.style.backgroundColor !== 'blue'){
-                e.target.style.borderColor = 'blue';
-                e.target.style.backgroundColor = 'blue';
+            let color;
+            if (randomButton.classList.contains('randomized')) {
+                color = randomHsl();
+            } else {
+                color = document.getElementById('color').value;
+            }
+            
+            if (e.target.style.opacity === ''){
+                e.target.style.borderColor = color;
+                e.target.style.backgroundColor = color;
                 e.target.style.opacity = 0.1;
             } else if (parseFloat(e.target.style.opacity) < 1) {
                 e.target.style.opacity = parseFloat(e.target.style.opacity) + 0.1;
