@@ -55,7 +55,8 @@
     <body>
         <div class="optionsDiv">
             <label for='squares'>Grid Size (1-64):</label>
-            <input type='number' id='squares' name='squares' min='1' max='64' value='16'>    
+            <input type='number' id='squares' name='squares' min='1' max='64' value='10'>
+            <input id='submitSquares' type='submit'>
         </div>
         <div class="optionsDiv">
             <label for='color'>Color:</label>
@@ -67,36 +68,49 @@
         </div>
     </body>
 
-    <script>
-        // User defined number of grids
-        let gridSize = document.getElementById('squares').value;
-        // grid height scaled to 90% of screen size and removing 2px for border
-        let gridHeight = (window.innerHeight * .90 / gridSize) - 2;
+    <script>              
         let container = document.getElementById('container');
         let randomButton = document.getElementById('randomButton');
+        createField();
+        
 
-        // Loop creates a AxA grid of square divs
-        for (let i = 0; i < gridSize; i++) {
-            let rowDiv = document.createElement('div');
-            rowDiv.classList.add('gridRow');
-            container.appendChild(rowDiv);
-
-            for (let j = 0; j < gridSize; j++) {
-                let squareDiv = document.createElement('div');
-                squareDiv.style.height = `${gridHeight}px`;
-                squareDiv.style.width = `${gridHeight}px`;
-                squareDiv.classList.add('gridSquare');
-                rowDiv.appendChild(squareDiv);
-            }
-        }
-
-        // Add event listeners for all of the squares in the grid.
-        const gridList = Array.from(document.getElementsByClassName('gridSquare'));
-        gridList.forEach(element => element.addEventListener('mouseover', changeColor));
+        
 
         // Add event listener for Random color button
         randomButton.addEventListener('mousedown', toggleRandom);
+
+        // Add event listener to submit button associated with number of squares
+        document.getElementById('submitSquares').addEventListener('mousedown', createField);
         
+        // Creates a grid of square divs
+        function createField() {
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+
+            let gridSize = document.getElementById('squares').value;
+
+            // grid height scaled to 90% of screen size and removing 2px for border
+            let gridHeight = (window.innerHeight * .90 / gridSize) - 2;
+
+            for (let i = 0; i < gridSize; i++) {
+                let rowDiv = document.createElement('div');
+                rowDiv.classList.add('gridRow');
+                container.appendChild(rowDiv);
+
+                for (let j = 0; j < gridSize; j++) {
+                    let squareDiv = document.createElement('div');
+                    squareDiv.style.height = `${gridHeight}px`;
+                    squareDiv.style.width = `${gridHeight}px`;
+                    squareDiv.classList.add('gridSquare');
+                    rowDiv.appendChild(squareDiv);
+                }
+            }
+            // Add event listeners for all of the squares in the grid.
+            const gridList = Array.from(document.getElementsByClassName('gridSquare'));
+            gridList.forEach(element => element.addEventListener('mouseover', changeColor));
+        }
+
         function toggleRandom(e) {
             e.target.classList.toggle('randomized');
         }
